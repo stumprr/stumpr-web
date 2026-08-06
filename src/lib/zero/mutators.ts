@@ -1,8 +1,10 @@
 import { defineMutator, defineMutators } from "@rocicorp/zero";
-import { z } from "zod";
+
+import { createId } from "@/lib/utils";
+import { playerSchema } from "@/components/players/player-form";
 
 export const mutators = defineMutators({
-	activateUser: defineMutator(z.object({ id: z.string() }), async ({ args: { id }, tx }) => {
-		await tx.mutate.User.update({ id });
+	createPlayer: defineMutator(playerSchema, async ({ args, tx }) => {
+		return await tx.mutate.Player.insert({ ...args, id: createId(), createdAt: Date.now() });
 	}),
 });

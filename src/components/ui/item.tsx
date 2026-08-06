@@ -45,12 +45,7 @@ const itemVariants = cva(
 function Item({ className, variant = "default", size = "default", render, ...props }: useRender.ComponentProps<"div"> & VariantProps<typeof itemVariants>) {
 	return useRender({
 		defaultTagName: "div",
-		props: mergeProps<"div">(
-			{
-				className: cn(itemVariants({ variant, size, className })),
-			},
-			props,
-		),
+		props: mergeProps<"div">({ className: cn(itemVariants({ variant, size, className })) }, props),
 		render,
 		state: {
 			slot: "item",
@@ -105,7 +100,7 @@ function ItemDescription({ className, ...props }: React.ComponentProps<"p">) {
 		<p
 			data-slot="item-description"
 			className={cn(
-				"line-clamp-2 text-left text-sm leading-normal font-normal text-muted-foreground group-data-[size=xs]/item:text-xs [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
+				"line-clamp-2 text-left text-xs leading-normal font-normal text-muted-foreground group-data-[size=xs]/item:text-xs [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
 				className,
 			)}
 			{...props}

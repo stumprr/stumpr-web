@@ -1,4 +1,6 @@
 import { useMemo } from "react";
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
@@ -26,17 +28,23 @@ function FieldLegend({ className, variant = "legend", ...props }: React.Componen
 	);
 }
 
-function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
-	return (
-		<div
-			data-slot="field-group"
-			className={cn(
-				"group/field-group @container/field-group flex w-full flex-col gap-5 data-[slot=checkbox-group]:gap-3 *:data-[slot=field-group]:gap-4",
-				className,
-			)}
-			{...props}
-		/>
-	);
+function FieldGroup({ render, className, ...props }: useRender.ComponentProps<"div">) {
+	return useRender({
+		defaultTagName: "div",
+		props: mergeProps<"div">(
+			{
+				className: cn(
+					"group/field-group @container/field-group flex w-full flex-col gap-5 data-[slot=checkbox-group]:gap-3 *:data-[slot=field-group]:gap-4",
+					className,
+				),
+			},
+			props,
+		),
+		render,
+		state: {
+			slot: "field-group",
+		},
+	});
 }
 
 const fieldVariants = cva("group/field flex w-full gap-1 data-[invalid=true]:text-destructive", {

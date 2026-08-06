@@ -210,6 +210,7 @@ export const playerTable = table("Player")
 		organizationId: string(),
 		userId: string().optional(),
 		name: string(),
+		role: string(),
 		image: string().optional(),
 		createdAt: number(),
 	})

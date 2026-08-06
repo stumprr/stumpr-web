@@ -15,4 +15,7 @@ export const queries = defineQueries({
 	getOrgMember: defineQuery(userOrgSchema, ({ args }) => {
 		return zql.Member.where("organizationId", args.orgId).where("userId", args.userId).one();
 	}),
+	getOrgPlayers: defineQuery(orgIdSchema, ({ args }) => {
+		return zql.Player.where("organizationId", args.orgId).orderBy("name", "asc");
+	}),
 });

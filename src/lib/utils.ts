@@ -1,4 +1,8 @@
-export { cn } from "cnfast";
+import { customAlphabet } from "nanoid";
+
+export { cn, type ClassValue } from "cnfast";
+
+export const createId = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 12);
 
 export function getInitials(name: string): string {
 	const words = name.trim().split(/\s+/);

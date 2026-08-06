@@ -98,7 +98,7 @@ function DrawerContent({ className, children, ...props }: DrawerPrimitive.Popup.
 					data-snap-points={hasSnapPoints ? "" : undefined}
 					className={cn(
 						// Base.
-						"group/drawer-popup pointer-events-auto fixed z-50 m-(--drawer-inset,0px) flex h-(--drawer-content-height) max-h-(--drawer-content-max-height,none) min-h-0 w-(--drawer-content-width,auto) transform-[translate3d(var(--translate-x,0px),var(--translate-y,0px),0)_scale(var(--stack-scale))] flex-col rounded-[min(var(--radius-4xl),24px)] border border-popover bg-popover text-sm text-popover-foreground shadow-xl transition-[transform,height,opacity,filter] duration-450 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform outline-none select-none [--drawer-bleed-background:transparent] [--drawer-inset:--spacing(2)] [--drawer-stacked-shadow:0_-20px_25px_-5px_rgb(0_0_0/0.1),0_-8px_10px_-6px_rgb(0_0_0/0.1)] [interpolate-size:allow-keywords] data-[swipe-direction=down]:data-nested-drawer-open:shadow-(--drawer-stacked-shadow) dark:border-border",
+						"group/drawer-popup pointer-events-auto fixed z-50 m-(--drawer-inset,0px) flex h-(--drawer-content-height) max-h-(--drawer-content-max-height,none) min-h-0 w-(--drawer-content-width,auto) transform-[translate3d(var(--translate-x,0px),var(--translate-y,0px),0)_scale(var(--stack-scale))] flex-col rounded-lg border border-popover bg-popover text-sm text-popover-foreground shadow-xl transition-[transform,height,opacity,filter] duration-450 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform outline-none select-none [--drawer-bleed-background:transparent] [--drawer-inset:--spacing(2)] [--drawer-stacked-shadow:0_-20px_25px_-5px_rgb(0_0_0/0.1),0_-8px_10px_-6px_rgb(0_0_0/0.1)] [interpolate-size:allow-keywords] data-[swipe-direction=down]:data-nested-drawer-open:shadow-(--drawer-stacked-shadow) dark:border-border",
 						// Nested.
 						"data-nested-drawer-open:overflow-hidden data-nested-drawer-open:brightness-95",
 						// Bleed.
@@ -144,14 +144,17 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="drawer-header"
-			className={cn("flex shrink-0 flex-col gap-0.5 p-4 pb-0 group-data-[swipe-axis=y]/drawer-popup:text-center md:gap-1.5 md:text-left", className)}
+			className={cn(
+				"flex shrink-0 flex-col gap-0.5 p-4 pb-0 group-data-[swipe-axis=y]/drawer-popup:text-center md:gap-1.5 md:text-left [.border-b]:pb-4",
+				className,
+			)}
 			{...props}
 		/>
 	);
 }
 
 function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="drawer-footer" className={cn("mt-auto flex shrink-0 flex-col gap-2 p-4 pt-0", className)} {...props} />;
+	return <div data-slot="drawer-footer" className={cn("mt-auto flex shrink-0 flex-col gap-2 p-4 pt-2", className)} {...props} />;
 }
 
 function DrawerTitle({ className, ...props }: DrawerPrimitive.Title.Props) {

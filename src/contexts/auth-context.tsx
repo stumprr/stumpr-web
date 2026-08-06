@@ -1,6 +1,6 @@
 import { createContext, use, useState } from "react";
 import { useQuery } from "@rocicorp/zero/react";
-import { redirect, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 
 import { authClient } from "@/lib/auth/client";
 import { type Organization, type User } from "@/lib/types";
@@ -35,7 +35,7 @@ export function AuthProvider({ initUser, children }: React.PropsWithChildren<{ i
 	};
 
 	if (!user) {
-		return redirect({ to: "/" });
+		throw new Error("Unauthenticated");
 	}
 
 	const contextValue = { user, joinedOrgs, toogleLogout };

@@ -21,6 +21,7 @@ model Player {
   userId                 String?       @unique
   user                   User?         @relation(fields: [userId], references: [id])
   name                   String
+  role                   String
   image                  String?
   createdAt              DateTime      @default(now())
   potmMatches            Match[]       @relation("PlayerOfTheMatch")
