@@ -16,10 +16,9 @@ import { AppDrawer } from "@/components/app-drawer";
 const playerRoles = ["Batsman", "Bowler", "All Ronder", "Wicket Keeper"] as const;
 
 export const playerSchema = z.object({
-	id: z.string().optional(),
-	name: z.string().nonempty("Player name is required").trim(),
-	role: z.string().nonempty("Player role is required").trim(),
 	organizationId: z.string().nonempty(),
+	name: z.string().nonempty("Enter a valid player name").trim(),
+	role: z.string().nonempty("Select player role").trim(),
 });
 
 type PlayerSchema = z.infer<typeof playerSchema>;
@@ -33,7 +32,7 @@ export function PlayerForm({ defaultValues, ...props }: PlayerFormProps) {
 	const formId = useId();
 	const [open, setOpen] = useState(false);
 
-	const { org } = useOrg();
+	const { org, players } = useOrg();
 	const { mutate } = useZero();
 
 	useEffect(() => {
@@ -51,14 +50,17 @@ export function PlayerForm({ defaultValues, ...props }: PlayerFormProps) {
 	});
 
 	async function onSubmit(data: PlayerSchema) {
+		if (players.find((player) => player.name.toLowerCase() === data.name.toLowerCase())) {
+			return form.setError("name", { message: "Player name already exisits" });
+		}
+
 		const result = mutate(mutators.createPlayer({ ...data }));
 
 		try {
 			const outcome = await result.server;
 
 			if (outcome.type === "error") {
-				toast.error(getErrorMessage(outcome.error, "Could not create player. Please try again."));
-				return;
+				return toast.error(getErrorMessage(outcome.error, "Could not create player. Please try again."));
 			}
 
 			toast.success("Player has been created");

@@ -16,3 +16,22 @@ export type User = {
 	emailVerified: boolean;
 	image?: string | null;
 };
+
+export type Team = {
+	id: string;
+	name: string;
+	slug: string;
+	createdAt: number;
+	organizationId: string;
+	image: string | null;
+};
+
+export type Player = {
+	id: string;
+	name: string;
+	role: string;
+	createdAt: number;
+	organizationId: string;
+	image: string | null;
+	userId: string | null;
+};

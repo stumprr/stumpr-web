@@ -1,8 +1,6 @@
-import { useQuery } from "@rocicorp/zero/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { PlusIcon } from "lucide-react";
 
-import { queries } from "@/lib/zero/queries";
 import { useOrg } from "@/contexts/org-context";
 import { Button } from "@/components/ui/button";
 import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item";
@@ -15,8 +13,7 @@ export const Route = createFileRoute("/_auth/$orgId/players/")({
 });
 
 function PlayersRoute() {
-	const { org } = useOrg();
-	const [players] = useQuery(queries.getOrgPlayers({ orgId: org.id }));
+	const { players } = useOrg();
 
 	return (
 		<DashboardLayout
