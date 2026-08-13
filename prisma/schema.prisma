@@ -15,9 +15,9 @@ datasource db {
 }
 
 model Player {
-  id                     String        @id @default(cuid())
-  organizationId         String
-  organization           Organization  @relation(fields: [organizationId], references: [id])
+  id                     String        @id
+  orgId                  String
+  org                    Organization  @relation(fields: [orgId], references: [id])
   userId                 String?       @unique
   user                   User?         @relation(fields: [userId], references: [id])
   name                   String
@@ -34,15 +34,15 @@ model Player {
   secondaryFieldingBalls Ball[]        @relation("BallSecondaryFielder")
   dismissedBalls         Ball[]        @relation("BallDismissedPlayer")
 
-  @@unique([id, organizationId])
-  @@index([organizationId])
+  @@unique([id, orgId])
+  @@index([orgId])
   @@map("players")
 }
 
 model Team {
-  id             String        @id @default(cuid())
-  organizationId String
-  organization   Organization  @relation(fields: [organizationId], references: [id])
+  id             String        @id
+  orgId          String
+  org            Organization  @relation(fields: [orgId], references: [id])
   name           String
   slug           String
   image          String?
@@ -56,23 +56,23 @@ model Team {
   bowlingInnings Inning[]      @relation("BowlingTeam")
   matchPlayers   MatchPlayer[]
 
-  @@unique([id, organizationId])
-  @@unique([organizationId, slug])
-  @@index([organizationId])
+  @@unique([id, orgId])
+  @@unique([orgId, slug])
+  @@index([orgId])
   @@map("teams")
 }
 
 model TeamPlayer {
-  id             String   @id @default(cuid())
-  organizationId String
-  teamId         String
-  team           Team     @relation(fields: [teamId, organizationId], references: [id, organizationId])
-  playerId       String
-  player         Player   @relation(fields: [playerId, organizationId], references: [id, organizationId])
-  createdAt      DateTime @default(now())
+  id        String   @id
+  orgId     String
+  teamId    String
+  team      Team     @relation(fields: [teamId, orgId], references: [id, orgId])
+  playerId  String
+  player    Player   @relation(fields: [playerId, orgId], references: [id, orgId])
+  createdAt DateTime @default(now())
 
-  @@unique([organizationId, teamId, playerId])
-  @@index([organizationId, playerId])
-  @@index([organizationId, teamId])
+  @@unique([orgId, teamId, playerId])
+  @@index([orgId, playerId])
+  @@index([orgId, teamId])
   @@map("team_players")
 }

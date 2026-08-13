@@ -13,10 +13,14 @@ function MatchesRoute() {
 		<DashboardLayout
 			title="Matches"
 			actions={
-				<Button>
-					<PlusIcon />
-					New match
-				</Button>
+				<Button
+					render={
+						<Route.Link to="/$orgId/matches/new">
+							<PlusIcon />
+							New match
+						</Route.Link>
+					}
+				/>
 			}
 		></DashboardLayout>
 	);

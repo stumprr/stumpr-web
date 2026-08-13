@@ -3,7 +3,7 @@
 
 import { boolean, createBuilder, createSchema, enumeration, number, relationships, string, table } from "@rocicorp/zero";
 
-export type MATCH_TYPE = "LIMITED_OVERS" | "TEST";
+export type MATCH_FORMAT = "LIMITED_OVERS" | "TEST";
 
 export type MATCH_STATUS = "SCHEDULED" | "LIVE" | "COMPLETED" | "ABANDONED" | "CANCELLED";
 
@@ -129,22 +129,20 @@ export const matchTable = table("Match")
 	.from("matches")
 	.columns({
 		id: string(),
-		organizationId: string(),
-		matchNumber: number(),
-		matchType: enumeration<MATCH_TYPE>(),
+		orgId: string(),
+		number: number(),
+		format: enumeration<MATCH_FORMAT>(),
 		status: enumeration<MATCH_STATUS>(),
-		oversPerInning: number().optional(),
+		overs: number(),
 		teamAId: string(),
 		teamBId: string(),
-		tossWinnerTeamId: string().optional(),
-		tossDecision: enumeration<TOSS_DECISION>().optional(),
+		tossWinnerTeamId: string(),
+		tossDecision: enumeration<TOSS_DECISION>(),
 		winnerTeamId: string().optional(),
 		result: enumeration<MATCH_RESULT>().optional(),
 		winMarginRuns: number().optional(),
 		winMarginWickets: number().optional(),
 		playerOfTheMatchId: string().optional(),
-		startedAt: number().optional(),
-		endedAt: number().optional(),
 		createdAt: number(),
 	})
 	.primaryKey("id");
@@ -153,14 +151,10 @@ export const matchPlayerTable = table("MatchPlayer")
 	.from("match_players")
 	.columns({
 		id: string(),
-		organizationId: string(),
+		orgId: string(),
 		matchId: string(),
 		teamId: string(),
 		playerId: string(),
-		isCaptain: boolean(),
-		isWicketKeeper: boolean(),
-		isSubstitute: boolean(),
-		createdAt: number(),
 	})
 	.primaryKey("id");
 
@@ -168,7 +162,7 @@ export const inningTable = table("Inning")
 	.from("innings")
 	.columns({
 		id: string(),
-		organizationId: string(),
+		orgId: string(),
 		matchId: string(),
 		inningNumber: number(),
 		status: enumeration<INNING_STATUS>(),
@@ -184,7 +178,7 @@ export const ballTable = table("Ball")
 	.from("balls")
 	.columns({
 		id: string(),
-		organizationId: string(),
+		orgId: string(),
 		inningId: string(),
 		sequence: number(),
 		batterId: string(),
@@ -207,7 +201,7 @@ export const playerTable = table("Player")
 	.from("players")
 	.columns({
 		id: string(),
-		organizationId: string(),
+		orgId: string(),
 		userId: string().optional(),
 		name: string(),
 		role: string(),
@@ -220,7 +214,7 @@ export const teamTable = table("Team")
 	.from("teams")
 	.columns({
 		id: string(),
-		organizationId: string(),
+		orgId: string(),
 		name: string(),
 		slug: string(),
 		image: string().optional(),
@@ -232,7 +226,7 @@ export const teamPlayerTable = table("TeamPlayer")
 	.from("team_players")
 	.columns({
 		id: string(),
-		organizationId: string(),
+		orgId: string(),
 		teamId: string(),
 		playerId: string(),
 		createdAt: number(),
@@ -293,27 +287,27 @@ export const organizationTableRelationships = relationships(organizationTable, (
 	}),
 	players: many({
 		sourceField: ["id"],
-		destField: ["organizationId"],
+		destField: ["orgId"],
 		destSchema: playerTable,
 	}),
 	teams: many({
 		sourceField: ["id"],
-		destField: ["organizationId"],
+		destField: ["orgId"],
 		destSchema: teamTable,
 	}),
 	matches: many({
 		sourceField: ["id"],
-		destField: ["organizationId"],
+		destField: ["orgId"],
 		destSchema: matchTable,
 	}),
 	innings: many({
 		sourceField: ["id"],
-		destField: ["organizationId"],
+		destField: ["orgId"],
 		destSchema: inningTable,
 	}),
 	balls: many({
 		sourceField: ["id"],
-		destField: ["organizationId"],
+		destField: ["orgId"],
 		destSchema: ballTable,
 	}),
 }));
@@ -342,136 +336,136 @@ export const invitationTableRelationships = relationships(invitationTable, ({ on
 	}),
 }));
 export const matchTableRelationships = relationships(matchTable, ({ one, many }) => ({
-	organization: one({
-		sourceField: ["organizationId"],
+	org: one({
+		sourceField: ["orgId"],
 		destField: ["id"],
 		destSchema: organizationTable,
 	}),
 	teamA: one({
-		sourceField: ["teamAId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["teamAId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: teamTable,
 	}),
 	teamB: one({
-		sourceField: ["teamBId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["teamBId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: teamTable,
 	}),
 	tossWinnerTeam: one({
-		sourceField: ["tossWinnerTeamId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["tossWinnerTeamId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: teamTable,
 	}),
 	winnerTeam: one({
-		sourceField: ["winnerTeamId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["winnerTeamId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: teamTable,
 	}),
 	playerOfTheMatch: one({
-		sourceField: ["playerOfTheMatchId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["playerOfTheMatchId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: playerTable,
 	}),
 	innings: many({
 		sourceField: ["id"],
-		destField: ["matchId", "organizationId"],
+		destField: ["matchId", "orgId"],
 		destSchema: inningTable,
 	}),
 	players: many({
 		sourceField: ["id"],
-		destField: ["matchId", "organizationId"],
+		destField: ["matchId", "orgId"],
 		destSchema: matchPlayerTable,
 	}),
 }));
 export const matchPlayerTableRelationships = relationships(matchPlayerTable, ({ one }) => ({
 	match: one({
-		sourceField: ["matchId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["matchId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: matchTable,
 	}),
 	team: one({
-		sourceField: ["teamId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["teamId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: teamTable,
 	}),
 	player: one({
-		sourceField: ["playerId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["playerId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: playerTable,
 	}),
 }));
 export const inningTableRelationships = relationships(inningTable, ({ one, many }) => ({
-	organization: one({
-		sourceField: ["organizationId"],
+	org: one({
+		sourceField: ["orgId"],
 		destField: ["id"],
 		destSchema: organizationTable,
 	}),
 	match: one({
-		sourceField: ["matchId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["matchId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: matchTable,
 	}),
 	battingTeam: one({
-		sourceField: ["battingTeamId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["battingTeamId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: teamTable,
 	}),
 	bowlingTeam: one({
-		sourceField: ["bowlingTeamId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["bowlingTeamId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: teamTable,
 	}),
 	balls: many({
 		sourceField: ["id"],
-		destField: ["inningId", "organizationId"],
+		destField: ["inningId", "orgId"],
 		destSchema: ballTable,
 	}),
 }));
 export const ballTableRelationships = relationships(ballTable, ({ one }) => ({
-	organization: one({
-		sourceField: ["organizationId"],
+	org: one({
+		sourceField: ["orgId"],
 		destField: ["id"],
 		destSchema: organizationTable,
 	}),
 	inning: one({
-		sourceField: ["inningId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["inningId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: inningTable,
 	}),
 	batter: one({
-		sourceField: ["batterId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["batterId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: playerTable,
 	}),
 	bowler: one({
-		sourceField: ["bowlerId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["bowlerId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: playerTable,
 	}),
 	nonStriker: one({
-		sourceField: ["nonStrikerId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["nonStrikerId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: playerTable,
 	}),
 	fielder: one({
-		sourceField: ["fielderId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["fielderId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: playerTable,
 	}),
 	secondaryFielder: one({
-		sourceField: ["secondaryFielderId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["secondaryFielderId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: playerTable,
 	}),
 	dismissedPlayer: one({
-		sourceField: ["dismissedPlayerId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["dismissedPlayerId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: playerTable,
 	}),
 }));
 export const playerTableRelationships = relationships(playerTable, ({ one, many }) => ({
-	organization: one({
-		sourceField: ["organizationId"],
+	org: one({
+		sourceField: ["orgId"],
 		destField: ["id"],
 		destSchema: organizationTable,
 	}),
@@ -482,106 +476,106 @@ export const playerTableRelationships = relationships(playerTable, ({ one, many 
 	}),
 	potmMatches: many({
 		sourceField: ["id"],
-		destField: ["playerOfTheMatchId", "organizationId"],
+		destField: ["playerOfTheMatchId", "orgId"],
 		destSchema: matchTable,
 	}),
 	teamMemberships: many({
 		sourceField: ["id"],
-		destField: ["playerId", "organizationId"],
+		destField: ["playerId", "orgId"],
 		destSchema: teamPlayerTable,
 	}),
 	matchSelections: many({
 		sourceField: ["id"],
-		destField: ["playerId", "organizationId"],
+		destField: ["playerId", "orgId"],
 		destSchema: matchPlayerTable,
 	}),
 	battingBalls: many({
 		sourceField: ["id"],
-		destField: ["batterId", "organizationId"],
+		destField: ["batterId", "orgId"],
 		destSchema: ballTable,
 	}),
 	nonStrikerBalls: many({
 		sourceField: ["id"],
-		destField: ["nonStrikerId", "organizationId"],
+		destField: ["nonStrikerId", "orgId"],
 		destSchema: ballTable,
 	}),
 	bowlingBalls: many({
 		sourceField: ["id"],
-		destField: ["bowlerId", "organizationId"],
+		destField: ["bowlerId", "orgId"],
 		destSchema: ballTable,
 	}),
 	fieldingBalls: many({
 		sourceField: ["id"],
-		destField: ["fielderId", "organizationId"],
+		destField: ["fielderId", "orgId"],
 		destSchema: ballTable,
 	}),
 	secondaryFieldingBalls: many({
 		sourceField: ["id"],
-		destField: ["secondaryFielderId", "organizationId"],
+		destField: ["secondaryFielderId", "orgId"],
 		destSchema: ballTable,
 	}),
 	dismissedBalls: many({
 		sourceField: ["id"],
-		destField: ["dismissedPlayerId", "organizationId"],
+		destField: ["dismissedPlayerId", "orgId"],
 		destSchema: ballTable,
 	}),
 }));
 export const teamTableRelationships = relationships(teamTable, ({ one, many }) => ({
-	organization: one({
-		sourceField: ["organizationId"],
+	org: one({
+		sourceField: ["orgId"],
 		destField: ["id"],
 		destSchema: organizationTable,
 	}),
 	roster: many({
 		sourceField: ["id"],
-		destField: ["teamId", "organizationId"],
+		destField: ["teamId", "orgId"],
 		destSchema: teamPlayerTable,
 	}),
 	matchTeamA: many({
 		sourceField: ["id"],
-		destField: ["teamAId", "organizationId"],
+		destField: ["teamAId", "orgId"],
 		destSchema: matchTable,
 	}),
 	matchTeamB: many({
 		sourceField: ["id"],
-		destField: ["teamBId", "organizationId"],
+		destField: ["teamBId", "orgId"],
 		destSchema: matchTable,
 	}),
 	tossWonMatches: many({
 		sourceField: ["id"],
-		destField: ["tossWinnerTeamId", "organizationId"],
+		destField: ["tossWinnerTeamId", "orgId"],
 		destSchema: matchTable,
 	}),
 	wonMatches: many({
 		sourceField: ["id"],
-		destField: ["winnerTeamId", "organizationId"],
+		destField: ["winnerTeamId", "orgId"],
 		destSchema: matchTable,
 	}),
 	battingInnings: many({
 		sourceField: ["id"],
-		destField: ["battingTeamId", "organizationId"],
+		destField: ["battingTeamId", "orgId"],
 		destSchema: inningTable,
 	}),
 	bowlingInnings: many({
 		sourceField: ["id"],
-		destField: ["bowlingTeamId", "organizationId"],
+		destField: ["bowlingTeamId", "orgId"],
 		destSchema: inningTable,
 	}),
 	matchPlayers: many({
 		sourceField: ["id"],
-		destField: ["teamId", "organizationId"],
+		destField: ["teamId", "orgId"],
 		destSchema: matchPlayerTable,
 	}),
 }));
 export const teamPlayerTableRelationships = relationships(teamPlayerTable, ({ one }) => ({
 	team: one({
-		sourceField: ["teamId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["teamId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: teamTable,
 	}),
 	player: one({
-		sourceField: ["playerId", "organizationId"],
-		destField: ["id", "organizationId"],
+		sourceField: ["playerId", "orgId"],
+		destField: ["id", "orgId"],
 		destSchema: playerTable,
 	}),
 }));

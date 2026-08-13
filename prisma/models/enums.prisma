@@ -1,4 +1,4 @@
-enum MATCH_TYPE {
+enum MATCH_FORMAT {
   LIMITED_OVERS
   TEST
 }

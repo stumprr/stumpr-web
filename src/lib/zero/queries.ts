@@ -16,9 +16,12 @@ export const queries = defineQueries({
 		return zql.Member.where("organizationId", args.orgId).where("userId", args.userId).one();
 	}),
 	getOrgPlayers: defineQuery(orgIdSchema, ({ args }) => {
-		return zql.Player.where("organizationId", args.orgId).orderBy("name", "asc");
+		return zql.Player.where("orgId", args.orgId).orderBy("name", "asc");
 	}),
 	getOrgTeams: defineQuery(orgIdSchema, ({ args }) => {
-		return zql.Team.where("organizationId", args.orgId).orderBy("name", "asc");
+		return zql.Team.where("orgId", args.orgId).orderBy("name", "asc");
+	}),
+	getOrgTeamPlayers: defineQuery(orgIdSchema, ({ args }) => {
+		return zql.TeamPlayer.where("orgId", args.orgId);
 	}),
 });

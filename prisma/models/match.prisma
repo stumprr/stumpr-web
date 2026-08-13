@@ -1,105 +1,96 @@
 model Match {
-  id                 String         @id @default(cuid())
-  organizationId     String
-  organization       Organization   @relation(fields: [organizationId], references: [id])
-  matchNumber        Int
-  matchType          MATCH_TYPE     @default(LIMITED_OVERS)
-  status             MATCH_STATUS   @default(SCHEDULED)
-  oversPerInning     Int?
+  id                 String        @id
+  orgId              String
+  org                Organization  @relation(fields: [orgId], references: [id])
+  number             Int
+  format             MATCH_FORMAT  @default(LIMITED_OVERS)
+  status             MATCH_STATUS  @default(SCHEDULED)
+  overs              Int
   teamAId            String
-  teamA              Team           @relation("MatchTeamA", fields: [teamAId, organizationId], references: [id, organizationId])
+  teamA              Team          @relation("MatchTeamA", fields: [teamAId, orgId], references: [id, orgId])
   teamBId            String
-  teamB              Team           @relation("MatchTeamB", fields: [teamBId, organizationId], references: [id, organizationId])
-  tossWinnerTeamId   String?
-  tossWinnerTeam     Team?          @relation("MatchTossWinner", fields: [tossWinnerTeamId, organizationId], references: [id, organizationId])
-  tossDecision       TOSS_DECISION?
+  teamB              Team          @relation("MatchTeamB", fields: [teamBId, orgId], references: [id, orgId])
+  tossWinnerTeamId   String
+  tossWinnerTeam     Team          @relation("MatchTossWinner", fields: [tossWinnerTeamId, orgId], references: [id, orgId])
+  tossDecision       TOSS_DECISION
   winnerTeamId       String?
-  winnerTeam         Team?          @relation("MatchWinner", fields: [winnerTeamId, organizationId], references: [id, organizationId])
+  winnerTeam         Team?         @relation("MatchWinner", fields: [winnerTeamId, orgId], references: [id, orgId])
   result             MATCH_RESULT?
   winMarginRuns      Int?
   winMarginWickets   Int?
   playerOfTheMatchId String?
-  playerOfTheMatch   Player?        @relation("PlayerOfTheMatch", fields: [playerOfTheMatchId, organizationId], references: [id, organizationId])
-  startedAt          DateTime?
-  endedAt            DateTime?
-  createdAt          DateTime       @default(now())
+  playerOfTheMatch   Player?       @relation("PlayerOfTheMatch", fields: [playerOfTheMatchId, orgId], references: [id, orgId])
+  createdAt          DateTime      @default(now())
   innings            Inning[]
   players            MatchPlayer[]
 
-  @@unique([id, organizationId])
-  @@unique([organizationId, matchNumber])
-  @@index([organizationId, status, createdAt])
-  @@index([organizationId, startedAt])
-  @@index([organizationId, teamAId])
-  @@index([organizationId, teamBId])
+  @@unique([id, orgId])
+  @@index([orgId, teamAId])
+  @@index([orgId, teamBId])
   @@map("matches")
 }
 
 model MatchPlayer {
-  id             String   @id @default(cuid())
-  organizationId String
-  matchId        String
-  match          Match    @relation(fields: [matchId, organizationId], references: [id, organizationId])
-  teamId         String
-  team           Team     @relation(fields: [teamId, organizationId], references: [id, organizationId])
-  playerId       String
-  player         Player   @relation(fields: [playerId, organizationId], references: [id, organizationId])
-  isCaptain      Boolean  @default(false)
-  isWicketKeeper Boolean  @default(false)
-  isSubstitute   Boolean  @default(false)
-  createdAt      DateTime @default(now())
+  id       String @id
+  orgId    String
+  matchId  String
+  match    Match  @relation(fields: [matchId, orgId], references: [id, orgId])
+  teamId   String
+  team     Team   @relation(fields: [teamId, orgId], references: [id, orgId])
+  playerId String
+  player   Player @relation(fields: [playerId, orgId], references: [id, orgId])
 
-  @@unique([organizationId, matchId, teamId, playerId])
-  @@index([organizationId, matchId])
-  @@index([organizationId, teamId])
-  @@index([organizationId, playerId])
+  @@unique([orgId, matchId, teamId, playerId])
+  @@index([orgId, matchId])
+  @@index([orgId, teamId])
+  @@index([orgId, playerId])
   @@map("match_players")
 }
 
 model Inning {
-  id             String        @id @default(cuid())
-  organizationId String
-  organization   Organization  @relation(fields: [organizationId], references: [id])
-  matchId        String
-  match          Match         @relation(fields: [matchId, organizationId], references: [id, organizationId])
-  inningNumber   Int
-  status         INNING_STATUS @default(NOT_STARTED)
-  battingTeamId  String
-  battingTeam    Team          @relation("BattingTeam", fields: [battingTeamId, organizationId], references: [id, organizationId])
-  bowlingTeamId  String
-  bowlingTeam    Team          @relation("BowlingTeam", fields: [bowlingTeamId, organizationId], references: [id, organizationId])
-  oversLimit     Int?
-  targetRuns     Int?
-  createdAt      DateTime      @default(now())
-  balls          Ball[]
+  id            String        @id
+  orgId         String
+  org           Organization  @relation(fields: [orgId], references: [id])
+  matchId       String
+  match         Match         @relation(fields: [matchId, orgId], references: [id, orgId])
+  inningNumber  Int
+  status        INNING_STATUS @default(NOT_STARTED)
+  battingTeamId String
+  battingTeam   Team          @relation("BattingTeam", fields: [battingTeamId, orgId], references: [id, orgId])
+  bowlingTeamId String
+  bowlingTeam   Team          @relation("BowlingTeam", fields: [bowlingTeamId, orgId], references: [id, orgId])
+  oversLimit    Int?
+  targetRuns    Int?
+  createdAt     DateTime      @default(now())
+  balls         Ball[]
 
-  @@unique([id, organizationId])
+  @@unique([id, orgId])
   @@unique([matchId, inningNumber])
-  @@index([organizationId, matchId, status])
-  @@index([organizationId, battingTeamId])
-  @@index([organizationId, bowlingTeamId])
+  @@index([orgId, matchId, status])
+  @@index([orgId, battingTeamId])
+  @@index([orgId, bowlingTeamId])
   @@map("innings")
 }
 
 model Ball {
-  id                 String          @id @default(cuid())
-  organizationId     String
-  organization       Organization    @relation(fields: [organizationId], references: [id])
+  id                 String          @id
+  orgId              String
+  org                Organization    @relation(fields: [orgId], references: [id])
   inningId           String
-  inning             Inning          @relation(fields: [inningId, organizationId], references: [id, organizationId])
+  inning             Inning          @relation(fields: [inningId, orgId], references: [id, orgId])
   sequence           Int
   batterId           String
-  batter             Player          @relation("BallBatter", fields: [batterId, organizationId], references: [id, organizationId])
+  batter             Player          @relation("BallBatter", fields: [batterId, orgId], references: [id, orgId])
   bowlerId           String
-  bowler             Player          @relation("BallBowler", fields: [bowlerId, organizationId], references: [id, organizationId])
+  bowler             Player          @relation("BallBowler", fields: [bowlerId, orgId], references: [id, orgId])
   nonStrikerId       String
-  nonStriker         Player          @relation("BallNonStriker", fields: [nonStrikerId, organizationId], references: [id, organizationId])
+  nonStriker         Player          @relation("BallNonStriker", fields: [nonStrikerId, orgId], references: [id, orgId])
   fielderId          String?
-  fielder            Player?         @relation("BallFielder", fields: [fielderId, organizationId], references: [id, organizationId])
+  fielder            Player?         @relation("BallFielder", fields: [fielderId, orgId], references: [id, orgId])
   secondaryFielderId String?
-  secondaryFielder   Player?         @relation("BallSecondaryFielder", fields: [secondaryFielderId, organizationId], references: [id, organizationId])
+  secondaryFielder   Player?         @relation("BallSecondaryFielder", fields: [secondaryFielderId, orgId], references: [id, orgId])
   dismissedPlayerId  String?
-  dismissedPlayer    Player?         @relation("BallDismissedPlayer", fields: [dismissedPlayerId, organizationId], references: [id, organizationId])
+  dismissedPlayer    Player?         @relation("BallDismissedPlayer", fields: [dismissedPlayerId, orgId], references: [id, orgId])
   dismissalKind      DISMISSAL_KIND?
   runsOffBat         Int             @default(0)
   wides              Int             @default(0)
@@ -108,11 +99,11 @@ model Ball {
   legByes            Int             @default(0)
   createdAt          DateTime        @default(now())
 
-  @@unique([id, organizationId])
+  @@unique([id, orgId])
   @@unique([inningId, sequence])
-  @@index([organizationId, inningId, sequence])
-  @@index([organizationId, batterId])
-  @@index([organizationId, bowlerId])
-  @@index([organizationId, dismissedPlayerId])
+  @@index([orgId, inningId, sequence])
+  @@index([orgId, batterId])
+  @@index([orgId, bowlerId])
+  @@index([orgId, dismissedPlayerId])
   @@map("balls")
 }

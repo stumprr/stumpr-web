@@ -16,7 +16,7 @@ import { AppDrawer } from "@/components/app-drawer";
 const playerRoles = ["Batsman", "Bowler", "All Ronder", "Wicket Keeper"] as const;
 
 export const playerSchema = z.object({
-	organizationId: z.string().nonempty(),
+	orgId: z.string().nonempty().readonly(),
 	name: z.string().nonempty("Enter a valid player name").trim(),
 	role: z.string().nonempty("Select player role").trim(),
 });
@@ -44,7 +44,7 @@ export function PlayerForm({ defaultValues, ...props }: PlayerFormProps) {
 		defaultValues: {
 			name: "",
 			role: "",
-			organizationId: org.id,
+			orgId: org.id,
 			...defaultValues,
 		},
 	});
