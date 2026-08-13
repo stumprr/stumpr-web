@@ -1,26 +1,45 @@
-import { Radio as RadioPrimitive } from "@base-ui/react/radio";
+import { useId } from "react";
 import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group";
+import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
+import { Radio } from "@/components/ui/radio";
 
-function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
-	return <RadioGroupPrimitive data-slot="radio-group" className={cn("grid w-full gap-2", className)} {...props} />;
+function RadioGroup({ side = "left", className, ...props }: RadioGroupPrimitive.Props & { side?: "left" | "right" }) {
+	return <RadioGroupPrimitive data-slot="radio-group" data-side={side} className={cn("group/radio-group grid", className)} {...props} />;
 }
 
-function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
+const radioItemVariants = cva(
+	"group/radio-item flex w-full cursor-pointer flex-wrap items-center gap-2.5 rounded-md border px-3 py-2 text-sm transition-colors duration-100 hover:bg-muted",
+	{
+		variants: {
+			variant: {
+				default: "border-transparent",
+			},
+		},
+		defaultVariants: {
+			variant: "default",
+		},
+	},
+);
+
+type RadioGroupItemProps = React.ComponentProps<typeof Radio> &
+	VariantProps<typeof radioItemVariants> & {
+		label: React.ReactNode;
+		description?: React.ReactNode;
+	};
+
+function RadioGroupItem({ label, description, variant, className, children, ...props }: RadioGroupItemProps) {
+	const id = useId();
 	return (
-		<RadioPrimitive.Root
-			data-slot="radio-group-item"
-			className={cn(
-				"group/radio-group-item peer relative flex aspect-square size-4 shrink-0 rounded-full border border-input outline-none after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 aria-invalid:aria-checked:border-primary dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground dark:data-checked:bg-primary",
-				className,
-			)}
-			{...props}
-		>
-			<RadioPrimitive.Indicator data-slot="radio-group-indicator" className="flex size-4 items-center justify-center">
-				<span className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-foreground" />
-			</RadioPrimitive.Indicator>
-		</RadioPrimitive.Root>
+		<label data-slot="radio-group-item" htmlFor={id} className={cn(radioItemVariants({ variant }), className)}>
+			<Radio id={id} className="group-data-[side=right]/radio-group:order-last" {...props} />
+			{children}
+			<div className="flex flex-1 flex-col">
+				<p className="line-clamp-1 flex w-fit items-center gap-2 text-sm leading-snug font-medium">{label}</p>
+				<p className="line-clamp-2 text-left text-xs leading-normal font-normal text-muted-foreground">{description}</p>
+			</div>
+		</label>
 	);
 }
 
