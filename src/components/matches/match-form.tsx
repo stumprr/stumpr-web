@@ -39,12 +39,12 @@ export const matchSchema = z.object({
 
 export type MatchSchema = z.infer<typeof matchSchema>;
 
-const MATCH_FORMAT = [
+const matchFormat: Array<{ value: MATCH_FORMAT; label: string }> = [
 	{ value: "LIMITED_OVERS", label: "Limited Overs" },
-	{ value: "TEST", label: "Test" },
+	{ value: "TEST", label: "Test Match" },
 ];
 
-const TOSS_DECISION = [
+const tossDecision: Array<{ value: TOSS_DECISION; label: string }> = [
 	{ value: "BAT", label: "Bat" },
 	{ value: "BOWL", label: "Bowl" },
 ];
@@ -121,13 +121,14 @@ export function MatchForm() {
 						render={({ field, fieldState }) => (
 							<Field data-invalid={fieldState.invalid}>
 								<FieldLabel>Match Format</FieldLabel>
-								<Select name={field.name} value={field.value} onValueChange={field.onChange} items={MATCH_FORMAT}>
+								<Select name={field.name} value={field.value} onValueChange={field.onChange} items={matchFormat}>
 									<SelectTrigger aria-invalid={fieldState.invalid}>
 										<SelectValue />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value="LIMITED_OVERS">Limited Overs</SelectItem>
-										<SelectItem value="TEST">Test Match</SelectItem>
+										{matchFormat.map((format) => (
+											<SelectItem value={format.value}>{format.label}</SelectItem>
+										))}
 									</SelectContent>
 								</Select>
 								{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -344,13 +345,14 @@ export function MatchForm() {
 								render={({ field, fieldState }) => (
 									<Field data-invalid={fieldState.invalid}>
 										<FieldLabel>Toss Winner Chose To</FieldLabel>
-										<Select name={field.name} value={field.value} onValueChange={field.onChange} items={TOSS_DECISION}>
+										<Select name={field.name} value={field.value} onValueChange={field.onChange} items={tossDecision}>
 											<SelectTrigger aria-invalid={fieldState.invalid}>
 												<SelectValue />
 											</SelectTrigger>
 											<SelectContent>
-												<SelectItem value="BAT">Bat</SelectItem>
-												<SelectItem value="BOWL">Bowl</SelectItem>
+												{tossDecision.map((decision) => (
+													<SelectItem value={decision.value}>{decision.label}</SelectItem>
+												))}
 											</SelectContent>
 										</Select>
 										{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
