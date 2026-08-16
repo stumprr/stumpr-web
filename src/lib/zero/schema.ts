@@ -130,7 +130,7 @@ export const matchTable = table("Match")
 	.columns({
 		id: string(),
 		orgId: string(),
-		number: number(),
+		title: string(),
 		format: enumeration<MATCH_FORMAT>(),
 		status: enumeration<MATCH_STATUS>(),
 		overs: number(),
@@ -164,7 +164,7 @@ export const inningTable = table("Inning")
 		id: string(),
 		orgId: string(),
 		matchId: string(),
-		inningNumber: number(),
+		number: number(),
 		status: enumeration<INNING_STATUS>(),
 		battingTeamId: string(),
 		bowlingTeamId: string(),

@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useZero } from "@rocicorp/zero/react";
 import { Controller, useForm, type DefaultValues } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { getErrorMessage } from "@/lib/utils";
 import { mutators } from "@/lib/zero/mutators";
@@ -13,15 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AppDrawer } from "@/components/app-drawer";
 
+import { playerSchema, type PlayerSchema } from "./schema";
+
 const playerRoles = ["Batsman", "Bowler", "All Ronder", "Wicket Keeper"] as const;
-
-export const playerSchema = z.object({
-	orgId: z.string().nonempty().readonly(),
-	name: z.string().nonempty("Enter a valid player name").trim(),
-	role: z.string().nonempty("Select player role").trim(),
-});
-
-type PlayerSchema = z.infer<typeof playerSchema>;
 
 type PlayerFormProps = {
 	trigger?: React.ReactElement<"button">;

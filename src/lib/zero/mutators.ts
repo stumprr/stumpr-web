@@ -1,12 +1,9 @@
 import { defineMutator, defineMutators } from "@rocicorp/zero";
-import { z } from "zod";
 
 import { createId } from "@/lib/utils";
-import { matchSchema } from "@/components/matches/match-form";
-import { playerSchema } from "@/components/players/player-form";
-import { teamSchema } from "@/components/teams/team-form";
-
-const orgIdSchema = z.object({ orgId: z.string().nonempty() });
+import { matchSchema } from "@/components/matches/schema";
+import { playerSchema } from "@/components/players/schema";
+import { teamSchema } from "@/components/teams/schema";
 
 export const mutators = defineMutators({
 	createPlayer: defineMutator(playerSchema, async ({ args, tx }) => {
@@ -16,12 +13,19 @@ export const mutators = defineMutators({
 		return await tx.mutate.Team.insert({ ...args, slug: args.slug.toUpperCase(), id: createId(), createdAt: Date.now() });
 	}),
 	createMatch: defineMutator(matchSchema, async ({ args, tx }) => {
+		const orgId = args.orgId;
 		const matchId = createId();
 
+		const tossLoserTeamId = args.tossWinnerTeamId === args.teamA.teamId ? args.teamB.teamId : args.teamA.teamId;
+
+		const tossWinnerBatsFirst = args.tossDecision === "BAT";
+		const firstBattingTeamId = tossWinnerBatsFirst ? args.tossWinnerTeamId : tossLoserTeamId;
+		const firstBowlingTeamId = tossWinnerBatsFirst ? tossLoserTeamId : args.tossWinnerTeamId;
+
 		await tx.mutate.Match.insert({
+			orgId,
 			id: matchId,
-			orgId: args.orgId,
-			number: Number(args.number),
+			title: args.title,
 			format: args.format,
 			status: "LIVE",
 			overs: Number(args.overs),
@@ -32,24 +36,28 @@ export const mutators = defineMutators({
 			createdAt: args.createdAt,
 		});
 
-		for (const playerId of args.teamA.playerIds) {
-			await tx.mutate.MatchPlayer.insert({
-				id: createId(),
-				orgId: args.orgId,
-				matchId: matchId,
-				teamId: args.teamA.teamId,
-				playerId: playerId,
-			});
+		const inningsCount = args.format === "TEST" ? 4 : 2;
+		const innings = Array.from({ length: inningsCount }, (_, index) => {
+			const isFirstTeamBatting = index % 2 === 0;
+			return {
+				number: index + 1,
+				status: index === 0 ? "LIVE" : "NOT_STARTED",
+				battingTeamId: isFirstTeamBatting ? firstBattingTeamId : firstBowlingTeamId,
+				bowlingTeamId: isFirstTeamBatting ? firstBowlingTeamId : firstBattingTeamId,
+			} as const;
+		});
+
+		for (const inning of innings) {
+			await tx.mutate.Inning.insert({ ...inning, matchId, orgId, id: createId(), createdAt: Date.now() });
 		}
 
-		for (const playerId of args.teamB.playerIds) {
-			await tx.mutate.MatchPlayer.insert({
-				id: createId(),
-				orgId: args.orgId,
-				matchId: matchId,
-				teamId: args.teamB.teamId,
-				playerId: playerId,
-			});
+		const allPlayers = [
+			...args.teamA.playerIds.map((playerId) => ({ teamId: args.teamA.teamId, playerId })),
+			...args.teamB.playerIds.map((playerId) => ({ teamId: args.teamB.teamId, playerId })),
+		];
+
+		for (const player of allPlayers) {
+			await tx.mutate.MatchPlayer.insert({ ...player, orgId, matchId, id: createId() });
 		}
 	}),
 });

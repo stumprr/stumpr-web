@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useZero } from "@rocicorp/zero/react";
 import { Controller, useForm, type DefaultValues } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { getErrorMessage } from "@/lib/utils";
 import { mutators } from "@/lib/zero/mutators";
@@ -12,13 +11,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field
 import { Input } from "@/components/ui/input";
 import { AppDrawer } from "@/components/app-drawer";
 
-export const teamSchema = z.object({
-	orgId: z.string().nonempty().readonly(),
-	name: z.string().nonempty("Enter a valid team name").trim(),
-	slug: z.string().nonempty("Enter a valid team short name").max(4, "Team short name can only contain 4 charaters").trim(),
-});
-
-type TeamSchema = z.infer<typeof teamSchema>;
+import { teamSchema, type TeamSchema } from "./schema";
 
 type TeamFormProps = {
 	trigger?: React.ReactElement<"button">;

@@ -5,7 +5,6 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { mutators } from "@/lib/zero/mutators";
 import type { MATCH_FORMAT, TOSS_DECISION } from "@/lib/zero/schema";
@@ -19,25 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export const matchSchema = z.object({
-	orgId: z.string().nonempty().readonly(),
-	teamA: z.object({
-		teamId: z.string().nonempty(),
-		playerIds: z.array(z.string().nonempty("Select a valid player")).min(1, "Select at least one player"),
-	}),
-	teamB: z.object({
-		teamId: z.string().nonempty(),
-		playerIds: z.array(z.string().nonempty("Select a valid player")).min(1, "Select at least one player"),
-	}),
-	createdAt: z.number().positive(),
-	number: z.string().trim().optional(),
-	overs: z.string().nonempty("Enter valid number of overs").trim(),
-	format: z.enum(["LIMITED_OVERS", "TEST"], "Select a valid match format"),
-	tossWinnerTeamId: z.string().nonempty("Select a valid toss winner"),
-	tossDecision: z.enum(["BAT", "BOWL"], { message: "Select a valid toss decision" }),
-});
-
-export type MatchSchema = z.infer<typeof matchSchema>;
+import { matchSchema, type MatchSchema } from "./schema";
 
 const matchFormat: Array<{ value: MATCH_FORMAT; label: string }> = [
 	{ value: "LIMITED_OVERS", label: "Limited Overs" },
@@ -62,8 +43,9 @@ export function MatchForm() {
 		mode: "onChange",
 		defaultValues: {
 			orgId,
-			number: "",
 			overs: "",
+			title: "Match 01",
+			createdAt: Date.now(),
 			tossWinnerTeamId: "",
 			format: "" as MATCH_FORMAT,
 			tossDecision: "" as TOSS_DECISION,
@@ -75,7 +57,6 @@ export function MatchForm() {
 				teamId: "",
 				playerIds: [],
 			},
-			createdAt: Date.now(),
 		},
 	});
 
@@ -104,12 +85,40 @@ export function MatchForm() {
 					<CardTitle className="col-span-2">Match Details</CardTitle>
 
 					<Controller
-						name="number"
+						name="title"
 						control={form.control}
 						render={({ field, fieldState }) => (
 							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel>Match Number</FieldLabel>
-								<Input {...field} type="number" aria-invalid={fieldState.invalid} />
+								<FieldLabel>Match Title</FieldLabel>
+								<Input {...field} aria-invalid={fieldState.invalid} />
+								{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+							</Field>
+						)}
+					/>
+
+					<Controller
+						name="createdAt"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<Field data-invalid={fieldState.invalid}>
+								<FieldLabel>Date</FieldLabel>
+								<Popover>
+									<PopoverTrigger
+										render={
+											<Button variant="outline" className="h-9 w-full justify-start border-border text-left font-normal" aria-invalid={fieldState.invalid} />
+										}
+									>
+										{field.value ? format(new Date(field.value), "PPP") : ""}
+									</PopoverTrigger>
+									<PopoverContent className="w-auto p-0" align="start">
+										<Calendar
+											mode="single"
+											captionLayout="dropdown"
+											selected={field.value ? new Date(field.value) : undefined}
+											onSelect={(date) => field.onChange(date ? date.getTime() : Date.now())}
+										/>
+									</PopoverContent>
+								</Popover>
 								{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 							</Field>
 						)}
@@ -143,34 +152,6 @@ export function MatchForm() {
 							<Field data-invalid={fieldState.invalid}>
 								<FieldLabel>Overs</FieldLabel>
 								<Input {...field} type="number" aria-invalid={fieldState.invalid} />
-								{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-							</Field>
-						)}
-					/>
-
-					<Controller
-						name="createdAt"
-						control={form.control}
-						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel>Date</FieldLabel>
-								<Popover>
-									<PopoverTrigger
-										render={
-											<Button variant="outline" className="h-9 w-full justify-start border-border text-left font-normal" aria-invalid={fieldState.invalid} />
-										}
-									>
-										{field.value ? format(new Date(field.value), "PPP") : ""}
-									</PopoverTrigger>
-									<PopoverContent className="w-auto p-0" align="start">
-										<Calendar
-											mode="single"
-											captionLayout="dropdown"
-											selected={field.value ? new Date(field.value) : undefined}
-											onSelect={(date) => field.onChange(date ? date.getTime() : Date.now())}
-										/>
-									</PopoverContent>
-								</Popover>
 								{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 							</Field>
 						)}

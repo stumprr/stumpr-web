@@ -2,7 +2,7 @@ model Match {
   id                 String        @id
   orgId              String
   org                Organization  @relation(fields: [orgId], references: [id])
-  number             Int
+  title              String
   format             MATCH_FORMAT  @default(LIMITED_OVERS)
   status             MATCH_STATUS  @default(SCHEDULED)
   overs              Int
@@ -53,7 +53,7 @@ model Inning {
   org           Organization  @relation(fields: [orgId], references: [id])
   matchId       String
   match         Match         @relation(fields: [matchId, orgId], references: [id, orgId])
-  inningNumber  Int
+  number        Int
   status        INNING_STATUS @default(NOT_STARTED)
   battingTeamId String
   battingTeam   Team          @relation("BattingTeam", fields: [battingTeamId, orgId], references: [id, orgId])
@@ -65,7 +65,7 @@ model Inning {
   balls         Ball[]
 
   @@unique([id, orgId])
-  @@unique([matchId, inningNumber])
+  @@unique([matchId, number])
   @@index([orgId, matchId, status])
   @@index([orgId, battingTeamId])
   @@index([orgId, bowlingTeamId])

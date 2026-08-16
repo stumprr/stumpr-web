@@ -7,7 +7,7 @@ import { Item, ItemContent, ItemDescription, ItemTitle } from "@/components/ui/i
 import { AdminAccess } from "@/components/dashboard/admin-access";
 import { DashboardLayout } from "@/components/dashboard/layout";
 import { PlayerAvatar } from "@/components/players/player-avatar";
-import { PlayerForm } from "@/components/players/player-form";
+import { PlayerForm } from "@/components/players/form";
 
 export const Route = createFileRoute("/_auth/$orgId/players/")({
 	component: PlayersRoute,
