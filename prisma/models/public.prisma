@@ -1,3 +1,51 @@
+model Player {
+  id                     String        @id
+  orgId                  String
+  org                    Organization  @relation(fields: [orgId], references: [id])
+  userId                 String?       @unique
+  user                   User?         @relation(fields: [userId], references: [id])
+  name                   String
+  role                   String
+  image                  String?
+  createdAt              DateTime      @default(now())
+  potmMatches            Match[]       @relation("PlayerOfTheMatch")
+  matchSelections        MatchPlayer[]
+  battingBalls           Ball[]        @relation("BallBatter")
+  nonStrikerBalls        Ball[]        @relation("BallNonStriker")
+  bowlingBalls           Ball[]        @relation("BallBowler")
+  fieldingBalls          Ball[]        @relation("BallFielder")
+  secondaryFieldingBalls Ball[]        @relation("BallSecondaryFielder")
+  dismissedBalls         Ball[]        @relation("BallDismissedPlayer")
+
+  @@unique([id, orgId])
+  @@index([orgId])
+  @@map("players")
+  @@schema("public")
+}
+
+model Team {
+  id             String        @id
+  orgId          String
+  org            Organization  @relation(fields: [orgId], references: [id])
+  name           String
+  slug           String
+  image          String?
+  createdAt      DateTime      @default(now())
+  matchTeamA     Match[]       @relation("MatchTeamA")
+  matchTeamB     Match[]       @relation("MatchTeamB")
+  tossWonMatches Match[]       @relation("MatchTossWinner")
+  wonMatches     Match[]       @relation("MatchWinner")
+  battingInnings Inning[]      @relation("BattingTeam")
+  bowlingInnings Inning[]      @relation("BowlingTeam")
+  matchPlayers   MatchPlayer[]
+
+  @@unique([id, orgId])
+  @@unique([orgId, slug])
+  @@index([orgId])
+  @@map("teams")
+  @@schema("public")
+}
+
 model Match {
   id                 String        @id
   orgId              String
@@ -28,6 +76,7 @@ model Match {
   @@index([orgId, teamAId])
   @@index([orgId, teamBId])
   @@map("matches")
+  @@schema("public")
 }
 
 model MatchPlayer {
@@ -45,6 +94,7 @@ model MatchPlayer {
   @@index([orgId, teamId])
   @@index([orgId, playerId])
   @@map("match_players")
+  @@schema("public")
 }
 
 model Inning {
@@ -54,6 +104,9 @@ model Inning {
   matchId       String
   match         Match         @relation(fields: [matchId, orgId], references: [id, orgId])
   number        Int
+  runs          Int
+  wickets       Int
+  legalBalls    Int
   status        INNING_STATUS @default(NOT_STARTED)
   battingTeamId String
   battingTeam   Team          @relation("BattingTeam", fields: [battingTeamId, orgId], references: [id, orgId])
@@ -70,6 +123,7 @@ model Inning {
   @@index([orgId, battingTeamId])
   @@index([orgId, bowlingTeamId])
   @@map("innings")
+  @@schema("public")
 }
 
 model Ball {
@@ -106,4 +160,5 @@ model Ball {
   @@index([orgId, bowlerId])
   @@index([orgId, dismissedPlayerId])
   @@map("balls")
+  @@schema("public")
 }

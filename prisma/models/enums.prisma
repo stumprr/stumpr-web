@@ -1,6 +1,8 @@
 enum MATCH_FORMAT {
   LIMITED_OVERS
   TEST
+
+  @@schema("public")
 }
 
 enum MATCH_STATUS {
@@ -9,11 +11,15 @@ enum MATCH_STATUS {
   COMPLETED
   ABANDONED
   CANCELLED
+
+  @@schema("public")
 }
 
 enum TOSS_DECISION {
   BAT
   BOWL
+
+  @@schema("public")
 }
 
 enum MATCH_RESULT {
@@ -22,6 +28,8 @@ enum MATCH_RESULT {
   NO_RESULT
   ABANDONED
   CANCELLED
+
+  @@schema("public")
 }
 
 enum INNING_STATUS {
@@ -30,6 +38,8 @@ enum INNING_STATUS {
   COMPLETED
   DECLARED
   FORFEITED
+
+  @@schema("public")
 }
 
 enum DISMISSAL_KIND {
@@ -46,4 +56,6 @@ enum DISMISSAL_KIND {
   OBSTRUCTING_FIELD
   TIMED_OUT
   HIT_BALL_TWICE
+
+  @@schema("public")
 }

@@ -7,10 +7,10 @@ import { teamSchema } from "@/components/teams/schema";
 
 export const mutators = defineMutators({
 	createPlayer: defineMutator(playerSchema, async ({ args, tx }) => {
-		return await tx.mutate.Player.insert({ ...args, id: createId(), createdAt: Date.now() });
+		return await tx.mutate.player.insert({ ...args, id: createId(), createdAt: Date.now() });
 	}),
 	createTeam: defineMutator(teamSchema, async ({ args, tx }) => {
-		return await tx.mutate.Team.insert({ ...args, slug: args.slug.toUpperCase(), id: createId(), createdAt: Date.now() });
+		return await tx.mutate.team.insert({ ...args, slug: args.slug.toUpperCase(), id: createId(), createdAt: Date.now() });
 	}),
 	createMatch: defineMutator(matchSchema, async ({ args, tx }) => {
 		const orgId = args.orgId;
@@ -22,7 +22,7 @@ export const mutators = defineMutators({
 		const firstBattingTeamId = tossWinnerBatsFirst ? args.tossWinnerTeamId : tossLoserTeamId;
 		const firstBowlingTeamId = tossWinnerBatsFirst ? tossLoserTeamId : args.tossWinnerTeamId;
 
-		await tx.mutate.Match.insert({
+		await tx.mutate.match.insert({
 			orgId,
 			id: matchId,
 			title: args.title,
@@ -40,6 +40,11 @@ export const mutators = defineMutators({
 		const innings = Array.from({ length: inningsCount }, (_, index) => {
 			const isFirstTeamBatting = index % 2 === 0;
 			return {
+				matchId,
+				orgId,
+				runs: 0,
+				wickets: 0,
+				legalBalls: 0,
 				number: index + 1,
 				status: index === 0 ? "LIVE" : "NOT_STARTED",
 				battingTeamId: isFirstTeamBatting ? firstBattingTeamId : firstBowlingTeamId,
@@ -48,7 +53,7 @@ export const mutators = defineMutators({
 		});
 
 		for (const inning of innings) {
-			await tx.mutate.Inning.insert({ ...inning, matchId, orgId, id: createId(), createdAt: Date.now() });
+			await tx.mutate.inning.insert({ ...inning, id: createId(), createdAt: Date.now() });
 		}
 
 		const allPlayers = [
@@ -57,7 +62,7 @@ export const mutators = defineMutators({
 		];
 
 		for (const player of allPlayers) {
-			await tx.mutate.MatchPlayer.insert({ ...player, orgId, matchId, id: createId() });
+			await tx.mutate.match_player.insert({ ...player, orgId, matchId, id: createId() });
 		}
 	}),
 });

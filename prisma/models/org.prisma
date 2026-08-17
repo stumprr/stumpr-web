@@ -1,0 +1,51 @@
+model Organization {
+  id          String       @id
+  name        String
+  slug        String       @unique
+  logo        String?
+  metadata    String?
+  createdAt   DateTime     @default(now())
+  members     Member[]
+  invitations Invitation[]
+  players     Player[]
+  teams       Team[]
+  matches     Match[]
+  innings     Inning[]
+  balls       Ball[]
+
+  @@map("organizations")
+  @@schema("org")
+}
+
+model Member {
+  id             String       @id
+  role           String
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([userId])
+  @@map("members")
+  @@schema("org")
+}
+
+model Invitation {
+  id             String       @id
+  email          String
+  role           String?
+  status         String
+  inviterId      String
+  inviter        User         @relation(fields: [inviterId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  expiresAt      DateTime
+
+  @@index([organizationId])
+  @@index([email])
+  @@map("invitations")
+  @@schema("org")
+}
