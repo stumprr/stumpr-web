@@ -1,24 +1,24 @@
 {
-	"plugins": ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
-	"tabWidth": 2,
-	"useTabs": true,
-	"printWidth": 160,
-	"singleQuote": false,
-	"trailingComma": "all",
-	"jsxSingleQuote": false,
-	"tailwindStylesheet": "./src/styles.css",
-	"tailwindFunctions": ["cn", "cva"],
-	"importOrder": [
-		"^(react/(.*)$)|^(react$)",
-		"^(@tanstack//(.*)$)|^(@tanstack/$)",
-		"<THIRD_PARTY_MODULES>",
-		"",
-		"^@/lib/(.*)$",
-		"^@/hooks/(.*)$",
-		"^@/contexts/(.*)$",
-		"^@/components/ui/(.*)$",
-		"^@/components/(.*)$",
-		"",
-		"^[./]"
-	]
+  "plugins": ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+  "tabWidth": 2,
+  "useTabs": true,
+  "printWidth": 160,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "jsxSingleQuote": false,
+  "tailwindStylesheet": "./src/styles.css",
+  "tailwindFunctions": ["cn", "cva"],
+  "importOrder": [
+    "^(react/(.*)$)|^(react$)",
+    "^(@tanstack//(.*)$)|^(@tanstack/$)",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^@/lib/(.*)$",
+    "^@/hooks/(.*)$",
+    "^@/contexts/(.*)$",
+    "^@/components/ui/(.*)$",
+    "^@/components/(.*)$",
+    "",
+    "^[./]"
+  ]
 }

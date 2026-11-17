@@ -6,20 +6,20 @@ import { schema } from "@/lib/zero/schema";
 
 const connectionString = process.env.ZERO_UPSTREAM_DB;
 if (!connectionString) {
-	throw new Error("ZERO_UPSTREAM_DB is not set");
+  throw new Error("ZERO_UPSTREAM_DB is not set");
 }
 
 const prisma = new PrismaClient({
-	adapter: new PrismaPg({
-		connectionString,
-	}),
+  adapter: new PrismaPg({
+    connectionString,
+  }),
 });
 
 export const dbProvider = zeroPrisma(schema, prisma);
 
 // Register global types for mutators on the server
 declare module "@rocicorp/zero" {
-	interface DefaultTypes {
-		dbProvider: typeof dbProvider;
-	}
+  interface DefaultTypes {
+    dbProvider: typeof dbProvider;
+  }
 }

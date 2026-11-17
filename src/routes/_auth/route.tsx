@@ -4,14 +4,14 @@ import { validateAuthUser } from "@/lib/auth/validations";
 import { AuthProvider } from "@/contexts/auth-context";
 
 export const Route = createFileRoute("/_auth")({
-	beforeLoad: () => validateAuthUser(),
-	component: () => {
-		const { user } = Route.useRouteContext();
+  beforeLoad: () => validateAuthUser(),
+  component: () => {
+    const { user } = Route.useRouteContext();
 
-		return (
-			<AuthProvider initUser={user}>
-				<Outlet />
-			</AuthProvider>
-		);
-	},
+    return (
+      <AuthProvider initUser={user}>
+        <Outlet />
+      </AuthProvider>
+    );
+  },
 });

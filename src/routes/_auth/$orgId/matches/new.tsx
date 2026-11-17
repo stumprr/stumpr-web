@@ -5,19 +5,19 @@ import { DashboardLayout } from "@/components/dashboard/layout";
 import { MatchForm } from "@/components/matches/form";
 
 export const Route = createFileRoute("/_auth/$orgId/matches/new")({
-	component: NewMatchRoute,
+  component: NewMatchRoute,
 });
 
 function NewMatchRoute() {
-	const { isAdmin } = useOrg();
+  const { isAdmin } = useOrg();
 
-	if (!isAdmin) {
-		throw Route.redirect({ to: "/$orgId/matches" });
-	}
+  if (!isAdmin) {
+    throw Route.redirect({ to: "/$orgId/matches" });
+  }
 
-	return (
-		<DashboardLayout title="New Match">
-			<MatchForm />
-		</DashboardLayout>
-	);
+  return (
+    <DashboardLayout title="New Match">
+      <MatchForm />
+    </DashboardLayout>
+  );
 }

@@ -6,9 +6,15 @@ import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
 const config = defineConfig({
-	resolve: { tsconfigPaths: true },
-	server: { port: 3000, host: true },
-	plugins: [nitro({ rollupConfig: { external: [/^@sentry\//] } }), tailwindcss(), tanstackStart(), viteReact(), babel({ presets: [reactCompilerPreset()] })],
+  resolve: { tsconfigPaths: true },
+  server: { port: 3000, host: true },
+  plugins: [
+    nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+    tailwindcss(),
+    tanstackStart(),
+    viteReact(),
+    babel({ presets: [reactCompilerPreset()] }),
+  ],
 });
 
 export default config;

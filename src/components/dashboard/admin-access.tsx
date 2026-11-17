@@ -1,9 +1,9 @@
 import { useOrg } from "@/contexts/org-context";
 
 export function AdminAccess({ children }: React.PropsWithChildren) {
-	const { isAdmin } = useOrg();
+  const { isAdmin } = useOrg();
 
-	if (!isAdmin) return;
+  if (!isAdmin) return;
 
-	return children;
+  return children;
 }

@@ -6,25 +6,25 @@ import { AdminAccess } from "@/components/dashboard/admin-access";
 import { DashboardLayout } from "@/components/dashboard/layout";
 
 export const Route = createFileRoute("/_auth/$orgId/matches/")({
-	component: MatchesRoute,
+  component: MatchesRoute,
 });
 
 function MatchesRoute() {
-	return (
-		<DashboardLayout
-			title="Matches"
-			actions={
-				<AdminAccess>
-					<Button
-						render={
-							<Route.Link to="/$orgId/matches/new">
-								<PlusIcon />
-								New match
-							</Route.Link>
-						}
-					/>
-				</AdminAccess>
-			}
-		></DashboardLayout>
-	);
+  return (
+    <DashboardLayout
+      title="Matches"
+      actions={
+        <AdminAccess>
+          <Button
+            render={
+              <Route.Link to="/$orgId/matches/new">
+                <PlusIcon />
+                New match
+              </Route.Link>
+            }
+          />
+        </AdminAccess>
+      }
+    ></DashboardLayout>
+  );
 }
